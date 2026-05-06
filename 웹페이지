@@ -1,0 +1,38 @@
+Implementation Plan - (주)비에이텍 Landing Page
+Creating a premium, modern landing page for (주)비에이텍 (BA Tech), a company specializing in water pump manufacturing, installation, and repair. The design will focus on "clean water" and professional technology.
+
+User Review Required
+IMPORTANT
+
+The current index.html, style.css, and script.js appear to be for an E-book reader. I will be overwriting these files to build the corporate landing page.
+
+Proposed Changes
+Core Design System
+[NEW] 
+index.css
+Define a modern color palette (Ocean Blue, Crystal Cyan, Pure White).
+Set up typography (Outfit/Inter from Google Fonts).
+Implement glassmorphism utilities and smooth transition animations.
+Responsive grid and flexbox layouts.
+Landing Page
+[MODIFY] 
+index.html
+Semantic HTML5 structure.
+Premium Hero section with dynamic typography.
+Navigation bar with glassmorphism effect.
+Sections for Company Intro, Products, and Equipment previews.
+Footer with the provided contact information (Phone, FAX, Email, Address).
+[MODIFY] 
+script.js
+Smooth scroll implementation.
+Intersection Observer for "reveal on scroll" animations.
+Simple mobile menu toggle.
+Assets
+[NEW] hero_water.webp (Generated)
+A high-quality image of crystal clear water splashing or a professional water pump system to be used as the hero background.
+Verification Plan
+Automated Tests
+I will use the browser tool to verify the layout, responsiveness, and visual appeal of the landing page.
+Manual Verification
+Verify that all navigation links (intro.html, product.html, etc.) are correctly placed, even if those pages aren't built yet.
+Check that the contact information is correctly displayed in the footer.

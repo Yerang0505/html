@@ -418,3 +418,18 @@ footer {
     .nav-links { display: none; }
     .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* Equipment Section */
+.manual-container h3 {
+    margin-bottom: 20px;
+    color: var(--text-main);
+}
+
+.manual-scroll {
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+}

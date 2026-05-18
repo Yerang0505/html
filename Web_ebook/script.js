@@ -44,9 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Welcome Overlay & BGM Autoplay Logic ---
-    const welcomeOverlay = document.getElementById('welcome-overlay');
-    const welcomeEnterBtn = document.getElementById('welcome-enter-btn');
+    // --- BGM Autoplay Logic ---
     const bgmPlayer = document.getElementById('bgm-player');
     const bgmAudio = document.getElementById('bgm-audio');
     const bgmToggleBtn = document.getElementById('bgm-toggle-btn');
@@ -56,10 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgmVolumeIcon = document.getElementById('bgm-volume-icon');
     const bgmVolume = document.getElementById('bgm-volume');
     
-    if (bgmAudio) {
-        // Set initial volume
-        bgmAudio.volume = 0.5;
-        bgmVolume.value = 0.5;
+    if (bgmPlayer && bgmAudio) {
+        // Slide in BGM player beautifully on page load
+        setTimeout(() => {
+            bgmPlayer.classList.add('show');
+        }, 800);
 
         // Function to update UI based on playing state
         function updatePlayerState(isPlaying) {
@@ -74,65 +73,89 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Try standard autoplay first (just in case browser allows it)
-        bgmAudio.play()
-            .then(() => {
-                updatePlayerState(true);
-                // If autoplay worked and session active, hide welcome screen immediately
-                if (sessionStorage.getItem('bgm_activated') === 'true') {
-                    if (welcomeOverlay) welcomeOverlay.style.display = 'none';
-                    if (bgmPlayer) bgmPlayer.classList.add('show');
-                }
-            })
-            .catch(() => {
-                console.log('Autoplay blocked. Awaiting user interaction via welcome overlay.');
-                updatePlayerState(false);
-                if (sessionStorage.getItem('bgm_activated') === 'true') {
-                    // If they already clicked enter in this session, try to play on any scroll/click
-                    setupPlayOnInteraction();
-                }
-            });
-
-        // Click event for the Welcome Enter button - counts as user gesture!
-        if (welcomeEnterBtn && welcomeOverlay) {
-            // If already activated in session, hide overlay immediately
-            if (sessionStorage.getItem('bgm_activated') === 'true') {
-                welcomeOverlay.style.display = 'none';
-                if (bgmPlayer) {
-                    setTimeout(() => {
-                        bgmPlayer.classList.add('show');
-                    }, 500);
-                }
-            } else {
-                welcomeEnterBtn.addEventListener('click', () => {
-                    welcomeOverlay.classList.add('fade-out');
-                    sessionStorage.setItem('bgm_activated', 'true');
+        // Try playing the audio (unmuted autoplay first, then muted autoplay fallback)
+        function tryPlayAudio() {
+            bgmAudio.play()
+                .then(() => {
+                    // Success! Autoplay worked (unmuted)
+                    bgmAudio.volume = 0.5;
+                    bgmVolume.value = 0.5;
+                    if (bgmVolumeIcon) bgmVolumeIcon.className = 'fas fa-volume-up';
+                    updatePlayerState(true);
+                })
+                .catch((error) => {
+                    console.log('Unmuted autoplay blocked. Attempting muted autoplay...');
+                    // Fallback to muted autoplay (always allowed by modern browsers)
+                    bgmAudio.muted = true;
+                    if (bgmVolumeIcon) bgmVolumeIcon.className = 'fas fa-volume-mute';
+                    bgmVolume.value = 0;
                     
-                    // Show BGM Player widget with clean animation
-                    setTimeout(() => {
-                        bgmPlayer.classList.add('show');
-                    }, 800);
+                    bgmAudio.play()
+                        .then(() => {
+                            updatePlayerState(true);
+                            // Unmute on first user gesture anywhere on the page
+                            setupUnmuteOnInteraction();
+                        })
+                        .catch((mutedError) => {
+                            console.log('Muted autoplay also blocked. Will play on first interaction.');
+                            setupPlayOnInteraction();
+                        });
+                });
+        }
 
-                    // Play audio unmuted immediately!
+        // Setup unmute trigger on first user gesture
+        const interactionEvents = ['click', 'touchstart', 'keydown'];
+        
+        function setupUnmuteOnInteraction() {
+            function unmuteAction() {
+                if (bgmAudio.muted) {
                     bgmAudio.muted = false;
                     bgmAudio.volume = 0.5;
                     bgmVolume.value = 0.5;
                     if (bgmVolumeIcon) bgmVolumeIcon.className = 'fas fa-volume-up';
-                    
+                }
+                removeListeners(unmuteAction);
+            }
+            interactionEvents.forEach(event => {
+                document.addEventListener(event, unmuteAction, { once: true, passive: true });
+            });
+        }
+        
+        function setupPlayOnInteraction() {
+            function playAction() {
+                if (bgmAudio.paused) {
+                    bgmAudio.muted = false;
+                    bgmAudio.volume = 0.5;
+                    bgmVolume.value = 0.5;
+                    if (bgmVolumeIcon) bgmVolumeIcon.className = 'fas fa-volume-up';
                     bgmAudio.play()
                         .then(() => updatePlayerState(true))
-                        .catch(err => {
-                            console.error('Play failed even after click:', err);
-                            setupPlayOnInteraction();
-                        });
-                });
+                        .catch(err => console.log(err));
+                }
+                removeListeners(playAction);
             }
+            interactionEvents.forEach(event => {
+                document.addEventListener(event, playAction, { once: true, passive: true });
+            });
+        }
+
+        function removeListeners(handler) {
+            interactionEvents.forEach(event => {
+                document.removeEventListener(event, handler);
+            });
         }
 
         // Toggle play/pause
         bgmToggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (bgmAudio.paused) {
+                // If it was playing muted, make sure to unmute when they click play
+                if (bgmAudio.muted) {
+                    bgmAudio.muted = false;
+                    bgmAudio.volume = 0.5;
+                    bgmVolume.value = 0.5;
+                    if (bgmVolumeIcon) bgmVolumeIcon.className = 'fas fa-volume-up';
+                }
                 bgmAudio.play()
                     .then(() => updatePlayerState(true))
                     .catch(err => console.error(err));
@@ -181,22 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Fallback: play on first user interaction anywhere
-        function setupPlayOnInteraction() {
-            const interactionEvents = ['click', 'touchstart', 'keydown', 'scroll'];
-            function playAction() {
-                if (bgmAudio.paused) {
-                    bgmAudio.play()
-                        .then(() => updatePlayerState(true))
-                        .catch(err => console.log(err));
-                }
-                interactionEvents.forEach(event => {
-                    document.removeEventListener(event, playAction);
-                });
-            }
-            interactionEvents.forEach(event => {
-                document.addEventListener(event, playAction, { once: true, passive: true });
-            });
-        }
+        // Run autoplay attempt on page load
+        tryPlayAudio();
     }
 });

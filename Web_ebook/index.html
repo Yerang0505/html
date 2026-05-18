@@ -194,6 +194,48 @@
         </div>
     </footer>
 
+    <!-- Beautiful BGM Player -->
+    <div id="bgm-player" class="bgm-player">
+        <audio id="bgm-audio" src="Pure Motion Industrial.mp3" loop autoplay preload="auto"></audio>
+        
+        <!-- Track Disc -->
+        <div class="disc-container">
+            <div class="disc" id="bgm-disc">
+                <i class="fas fa-music"></i>
+            </div>
+            <!-- Equalizer Bouncing Bars -->
+            <div class="eq-bars" id="bgm-eq">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+
+        <!-- Track Info & Controls -->
+        <div class="bgm-info">
+            <div class="bgm-title">Pure Motion Industrial</div>
+            <div class="bgm-status" id="bgm-status">BGM 꺼짐</div>
+        </div>
+        
+        <div class="bgm-controls">
+            <!-- Volume Control -->
+            <div class="volume-container">
+                <button class="control-btn" id="bgm-mute-btn" title="음소거">
+                    <i class="fas fa-volume-up" id="bgm-volume-icon"></i>
+                </button>
+                <div class="volume-slider-wrapper">
+                    <input type="range" id="bgm-volume" class="volume-slider" min="0" max="1" step="0.05" value="0.5">
+                </div>
+            </div>
+            
+            <!-- Play/Pause Toggle -->
+            <button class="play-btn" id="bgm-toggle-btn" title="재생/일시정지">
+                <i class="fas fa-play" id="bgm-play-icon"></i>
+            </button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

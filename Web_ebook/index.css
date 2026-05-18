@@ -656,3 +656,120 @@ footer {
         max-width: 160px;
     }
 }
+
+/* --- Welcome Overlay for BGM Autoplay --- */
+.welcome-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
+    padding: 20px;
+}
+
+.welcome-overlay.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.welcome-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 30px;
+    padding: 50px 40px;
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    animation: welcomeCardFloat 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: white;
+}
+
+@keyframes welcomeCardFloat {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+.welcome-logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -1px;
+    margin-bottom: 25px;
+}
+
+.welcome-logo span {
+    color: var(--secondary);
+}
+
+.welcome-card h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    word-break: keep-all;
+    background: linear-gradient(to right, #ffffff, var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-card p {
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 35px;
+    color: rgba(255, 255, 255, 0.75);
+    word-break: keep-all;
+}
+
+.welcome-btn {
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4), 
+                0 0 0 0px rgba(0, 210, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    animation: welcomePulse 2s infinite;
+    outline: none;
+}
+
+.welcome-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.5);
+    animation-play-state: paused;
+}
+
+.welcome-btn:active {
+    transform: translateY(-1px);
+}
+
+@keyframes welcomePulse {
+    0% {
+        box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4), 0 0 0 0px rgba(0, 210, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4), 0 0 0 15px rgba(0, 210, 255, 0);
+    }
+    100% {
+        box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4), 0 0 0 0px rgba(0, 210, 255, 0);
+    }
+}
